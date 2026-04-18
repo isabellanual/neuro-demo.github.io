@@ -188,7 +188,7 @@
                     <span id="label-max-r">r = 0.67</span>
                 </div>
                 <p id="colorbar-caption" class="text-[0.65rem] text-[var(--muted)] text-center leading-relaxed mt-1">
-                    Colour represents prediction accuracy in V1 only — grey regions are outside the model's scope.
+                    Color represents prediction accuracy in V1 only — grey regions are outside the model's scope.
                 </p>
             </div>
 
@@ -268,7 +268,7 @@
                 <div class="w-3 h-3 rounded-full bg-[#fd8d3c] mt-1 flex-shrink-0"></div>
                 <div>
                     <p class="text-[var(--muted)] text-xs leading-relaxed">
-                        The <span class="text-white font-semibold">coloured region</span> on the brain is V1. Warmer colours = more accurate predictions. The grey brain is shown for context only — the model does not predict anywhere else.
+                        The <span class="text-white font-semibold">colored region</span> on the brain is V1. Warmer colors = more accurate predictions. The grey brain is shown for context only — the model does not predict anywhere else.
                     </p>
                 </div>
             </div>
@@ -597,7 +597,7 @@ function populateGalleries() {
     const pred = state.imageResponses[imgId].predicted;
     document.getElementById('label-min-r').innerText = Math.min(...pred).toFixed(2);
     document.getElementById('label-max-r').innerText = Math.max(...pred).toFixed(2);
-    document.getElementById('colorbar-caption').innerText = 'Colour represents the model\'s predicted V1 response to this image — grey regions are outside the model\'s scope.';
+    document.getElementById('colorbar-caption').innerText = 'Color represents the model\'s predicted V1 response to this image — grey regions are outside the model\'s scope.';
     
     updateBrainColors(true);
     renderDetailView();
@@ -618,7 +618,7 @@ function resetToCorrelation() {
     const c = state.correlations;
     document.getElementById('label-min-r').innerText = `r = ${c.min.toFixed(2)}`;
     document.getElementById('label-max-r').innerText = `r = ${c.max.toFixed(2)}`;
-    document.getElementById('colorbar-caption').innerText = 'Colour represents prediction accuracy in V1 only — grey regions are outside the model\'s scope.';
+    document.getElementById('colorbar-caption').innerText = 'Color represents prediction accuracy in V1 only — grey regions are outside the model\'s scope.';
     
     // Clear detail
     document.getElementById('desktop-detail').innerHTML = `<div class="text-xs text-[var(--muted)] italic">Select an image from the gallery to explore its specific prediction values.</div>`;
