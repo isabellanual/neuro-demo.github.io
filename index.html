@@ -13,7 +13,7 @@
             --bg: #0f0f0f;
             --surface: #1a1a1a;
             --text: #f0f0f0;
-            --accent: #fd8d3c;
+            --accent: #4b90cb;
             --muted: #888888;
             --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
@@ -113,7 +113,7 @@
             .desktop-layout {
                 display: grid;
                 grid-template-columns: 280px 1fr 280px;
-                height: calc(100vh - 80px - 60px); /* header - footer */
+                height: calc(100vh - 80px - 60px); /* header - footer, desktop only */
                 gap: 1px;
                 background: var(--border);
             }
@@ -132,7 +132,7 @@
 <div id="app" class="flex flex-col h-screen">
     
     <!-- Top Header (Desktop & Mobile) -->
-    <header class="h-[80px] px-[30px] border-b border-[var(--border)] flex justify-between items-center bg-[var(--bg)]">
+    <header class="hidden md:flex h-[80px] px-[30px] border-b border-[var(--border)] justify-between items-center bg-[var(--bg)]">
         <div class="title-group">
             <h1 class="text-[1.4rem] font-semibold tracking-tight">V1 Encoding Model — Natural Scenes Dataset</h1>
             <p class="text-[0.85rem] text-[var(--muted)] mt-1">Predicting brain activity in the primary visual cortex from natural images</p>
@@ -164,7 +164,7 @@
 
         <!-- Panel 2: 3D Visualization -->
         <section class="viewer-panel relative bg-[var(--bg)] flex flex-col items-center justify-center p-6">
-            <div id="active-mode-label" class="hidden absolute top-6 px-3 py-1.5 bg-[var(--accent)] text-black text-[0.7rem] font-bold uppercase rounded-full shadow-lg z-20">
+            <div id="active-mode-label" class="hidden absolute top-6 px-3 py-1.5 bg-[var(--accent)] text-white text-[0.7rem] font-bold uppercase rounded-full shadow-lg z-20">
                 Actual BOLD Signal
             </div>
             <div id="default-mode-label" class="absolute top-6 px-3 py-1.5 bg-[var(--surface)] text-[var(--muted)] text-[0.7rem] font-bold uppercase rounded-full border border-[var(--border)] z-20">
@@ -302,10 +302,10 @@ function getGrey(t = 0.5) {
 // 3. Three.js Setup
 const brainContainer = document.getElementById('brain-container');
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0f0f0f);
+scene.background = new THREE.Color(0x1a2535);  // dark blue-grey, distinct from brain mesh
 
 const camera = new THREE.PerspectiveCamera(35, brainContainer.clientWidth / brainContainer.clientHeight, 0.1, 2000);
-camera.position.set(-50, -30, 250);  // pulled back, angled toward left occipital / V1
+camera.position.set(-30, 80, 380);  // pulled further back, tilted to look down at occipital
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(brainContainer.clientWidth, brainContainer.clientHeight);
@@ -402,7 +402,7 @@ function initializeApp() {
     onWindowResize();
 
     // Point orbit controls at the left occipital pole where V1 sits
-    controls.target.set(-20, -70, 20);
+    controls.target.set(-10, -40, 10);
     controls.update();
 
     updateStatsUI();
@@ -553,11 +553,6 @@ function populateGalleries() {
     
     updateBrainColors(true);
     renderDetailView();
-    
-    // Smooth scroll for mobile
-    if (window.innerWidth < 768) {
-        document.getElementById('histogram-section').scrollIntoView({ behavior: 'smooth' });
-    }
 }
 
 function resetToCorrelation() {
@@ -657,7 +652,7 @@ function renderMiniChart() {
         const ty = getY(tVal);
         
         // Prediction: Orange fill
-        ctx.fillStyle = '#fd8d3c';
+        ctx.fillStyle = '#4b90cb';
         ctx.fillRect(x, Math.min(zeroY, py), barW - 4, Math.abs(py - zeroY));
         
         // Ground Truth: Outline
