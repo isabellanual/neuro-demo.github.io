@@ -352,30 +352,30 @@ renderer.domElement.style.touchAction = 'none';
 
 // Lights — four directional lights from each side + ambient base
 // ensures no face goes dark regardless of rotation
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.35);
 scene.add(ambientLight);
 
-const lightFront = new THREE.DirectionalLight(0xffffff, 0.6);
+const lightFront = new THREE.DirectionalLight(0xffffff, 0.8);
 lightFront.position.set(0, 0, 1);
 scene.add(lightFront);
 
-const lightBack = new THREE.DirectionalLight(0xffffff, 0.6);
+const lightBack = new THREE.DirectionalLight(0xffffff, 0.7);
 lightBack.position.set(0, 0, -1);
 scene.add(lightBack);
 
-const lightLeft = new THREE.DirectionalLight(0xffffff, 0.4);
+const lightLeft = new THREE.DirectionalLight(0xffffff, 0.55);
 lightLeft.position.set(-1, 0, 0);
 scene.add(lightLeft);
 
-const lightRight = new THREE.DirectionalLight(0xffffff, 0.4);
+const lightRight = new THREE.DirectionalLight(0xffffff, 0.55);
 lightRight.position.set(1, 0, 0);
 scene.add(lightRight);
 
-const lightTop = new THREE.DirectionalLight(0xffffff, 0.4);
+const lightTop = new THREE.DirectionalLight(0xffffff, 0.6);
 lightTop.position.set(0, 1, 0);
 scene.add(lightTop);
 
-const lightBottom = new THREE.DirectionalLight(0xffffff, 0.3);
+const lightBottom = new THREE.DirectionalLight(0xffffff, 0.35);
 lightBottom.position.set(0, -1, 0);
 scene.add(lightBottom);
 
@@ -417,13 +417,13 @@ async function loadData() {
                 if (child.isMesh) {
                     state.meshes.push(child);
                     const count = child.geometry.attributes.position.count;
-                    // Initialize to light grey so mesh is visible before updateBrainColors runs
+                    // Initialize to near-white so mesh is visible before updateBrainColors runs
                     const initColors = new Float32Array(count * 3);
-                    for (let i = 0; i < count * 3; i++) initColors[i] = 0.82;
+                    for (let i = 0; i < count * 3; i++) initColors[i] = 0.95;
                     child.geometry.setAttribute('color',
                         new THREE.BufferAttribute(initColors, 3)
                     );
-                    child.material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.8, metalness: 0.0 });
+                    child.material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, metalness: 0.05 });
                 }
             });
 
@@ -751,12 +751,12 @@ function updateBrainColors(isModeB) {
         
         for (let i = 0; i < v2v.length; i++) {
             if (!mask[i]) {
-                targetColors.push(getGrey(0.82));   // light whitish-grey for rest of brain
+                targetColors.push(getGrey(0.92));   // near-white for rest of brain
             } else {
                 const voxelIdx = v2v[i];
                 const rVal = corrs[voxelIdx];
                 if (rVal === null || isNaN(rVal)) {
-                    targetColors.push(getGrey(0.6)); // mid-grey for NaN voxels
+                    targetColors.push(getGrey(0.75)); // mid-grey for NaN voxels
                 } else {
                     targetColors.push(getYlOrRd(rVal / maxR));
                 }
@@ -771,7 +771,7 @@ function updateBrainColors(isModeB) {
 
         for (let i = 0; i < v2v.length; i++) {
             if (!mask[i]) {
-                targetColors.push(getGrey(0.82));   // light whitish-grey for rest of brain
+                targetColors.push(getGrey(0.92));   // near-white for rest of brain
             } else {
                 const voxelIdx = v2v[i];
                 const pVal = pred[voxelIdx];
