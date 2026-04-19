@@ -603,7 +603,7 @@ function populateGalleries() {
     const pred = state.imageResponses[imgId].predicted;
     document.getElementById('label-min-r').innerText = Math.min(...pred).toFixed(2);
     document.getElementById('label-max-r').innerText = Math.max(...pred).toFixed(2);
-    document.getElementById('colorbar-caption').innerText = 'Color represents the model\'s predicted V1 response to this image — grey regions are outside the model\'s scope.';
+    document.getElementById('colorbar-caption').innerText = 'Color represents the model\'s predicted V1 response to this image. Grey regions are outside the model\'s scope.';
 
     updateBrainColors(true);
     renderDetailView();
@@ -624,7 +624,7 @@ function resetToCorrelation() {
     const c = state.correlations;
     document.getElementById('label-min-r').innerText = `r = ${c.min.toFixed(2)}`;
     document.getElementById('label-max-r').innerText = `r = ${c.max.toFixed(2)}`;
-    document.getElementById('colorbar-caption').innerText = 'Color represents prediction accuracy in V1 only — grey regions are outside the model\'s scope.';
+    document.getElementById('colorbar-caption').innerText = 'Color represents prediction accuracy in V1 only. Grey regions are outside the model\'s scope.';
 
     // Clear detail
     document.getElementById('desktop-detail').innerHTML = `<div class="text-xs text-[var(--muted)] italic">Select an image from the gallery to explore its specific prediction values.</div>`;
