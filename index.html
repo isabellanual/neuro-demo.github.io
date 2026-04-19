@@ -352,10 +352,10 @@ renderer.domElement.style.touchAction = 'none';
 
 // Lights — four directional lights from each side + ambient base
 // ensures no face goes dark regardless of rotation
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.35);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
 scene.add(ambientLight);
 
-const lightFront = new THREE.DirectionalLight(0xffffff, 0.8);
+const lightFront = new THREE.DirectionalLight(0xffffff, 0.9);
 lightFront.position.set(0, 0, 1);
 scene.add(lightFront);
 
@@ -363,19 +363,19 @@ const lightBack = new THREE.DirectionalLight(0xffffff, 0.7);
 lightBack.position.set(0, 0, -1);
 scene.add(lightBack);
 
-const lightLeft = new THREE.DirectionalLight(0xffffff, 0.55);
+const lightLeft = new THREE.DirectionalLight(0xffffff, 0.6);
 lightLeft.position.set(-1, 0, 0);
 scene.add(lightLeft);
 
-const lightRight = new THREE.DirectionalLight(0xffffff, 0.55);
+const lightRight = new THREE.DirectionalLight(0xffffff, 0.6);
 lightRight.position.set(1, 0, 0);
 scene.add(lightRight);
 
-const lightTop = new THREE.DirectionalLight(0xffffff, 0.6);
+const lightTop = new THREE.DirectionalLight(0xffffff, 0.7);
 lightTop.position.set(0, 1, 0);
 scene.add(lightTop);
 
-const lightBottom = new THREE.DirectionalLight(0xffffff, 0.35);
+const lightBottom = new THREE.DirectionalLight(0xffffff, 0.3);
 lightBottom.position.set(0, -1, 0);
 scene.add(lightBottom);
 
@@ -415,15 +415,42 @@ async function loadData() {
             // Scan for meshes
             brainMesh.traverse((child) => {
                 if (child.isMesh) {
-                    state.meshes.push(child);
+                    console.log('Found mesh:', child.name, 
+                        'verts:', child.geometry.attributes.position.count,
+                        'existing color attr:', !!child.geometry.attributes.color,
+                        'existing material:', child.material?.type);
+
+                    // Dispose old material from GLB so it doesn't interfere
+                    if (child.material) {
+                        if (Array.isArray(child.material)) {
+                            child.material.forEach(m => m.dispose());
+                        } else {
+                            child.material.dispose();
+                        }
+                    }
+
+                    // Force-delete any baked-in color attribute (may be all zeros)
+                    if (child.geometry.attributes.color) {
+                        child.geometry.deleteAttribute('color');
+                    }
+
                     const count = child.geometry.attributes.position.count;
-                    // Initialize to near-white so mesh is visible before updateBrainColors runs
+                    // Initialize to near-white (0.95) so mesh is clearly visible
                     const initColors = new Float32Array(count * 3);
                     for (let i = 0; i < count * 3; i++) initColors[i] = 0.95;
-                    child.geometry.setAttribute('color',
-                        new THREE.BufferAttribute(initColors, 3)
-                    );
-                    child.material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, metalness: 0.05 });
+                    const colorAttr = new THREE.BufferAttribute(initColors, 3);
+                    colorAttr.needsUpdate = true;
+                    child.geometry.setAttribute('color', colorAttr);
+
+                    child.material = new THREE.MeshStandardMaterial({
+                        vertexColors: true,
+                        roughness: 0.55,
+                        metalness: 0.05,
+                        side: THREE.DoubleSide   // render both faces — avoids black patches from inverted normals
+                    });
+
+                    state.meshes.push(child);
+                    console.log('Mesh patched. Color attr count:', child.geometry.attributes.color.count);
                 }
             });
 
