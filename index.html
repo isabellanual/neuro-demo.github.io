@@ -352,26 +352,26 @@ renderer.domElement.style.touchAction = 'none';
 
 // Lights — four directional lights from each side + ambient base
 // ensures no face goes dark regardless of rotation
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
-const lightFront = new THREE.DirectionalLight(0xffffff, 0.9);
+const lightFront = new THREE.DirectionalLight(0xffffff, 0.6);
 lightFront.position.set(0, 0, 1);
 scene.add(lightFront);
 
-const lightBack = new THREE.DirectionalLight(0xffffff, 0.7);
+const lightBack = new THREE.DirectionalLight(0xffffff, 0.6);
 lightBack.position.set(0, 0, -1);
 scene.add(lightBack);
 
-const lightLeft = new THREE.DirectionalLight(0xffffff, 0.6);
+const lightLeft = new THREE.DirectionalLight(0xffffff, 0.4);
 lightLeft.position.set(-1, 0, 0);
 scene.add(lightLeft);
 
-const lightRight = new THREE.DirectionalLight(0xffffff, 0.6);
+const lightRight = new THREE.DirectionalLight(0xffffff, 0.4);
 lightRight.position.set(1, 0, 0);
 scene.add(lightRight);
 
-const lightTop = new THREE.DirectionalLight(0xffffff, 0.7);
+const lightTop = new THREE.DirectionalLight(0xffffff, 0.4);
 lightTop.position.set(0, 1, 0);
 scene.add(lightTop);
 
@@ -415,42 +415,29 @@ async function loadData() {
             // Scan for meshes
             brainMesh.traverse((child) => {
                 if (child.isMesh) {
-                    console.log('Found mesh:', child.name, 
-                        'verts:', child.geometry.attributes.position.count,
-                        'existing color attr:', !!child.geometry.attributes.color,
-                        'existing material:', child.material?.type);
-
-                    // Dispose old material from GLB so it doesn't interfere
+                    // Dispose old GLB material
                     if (child.material) {
-                        if (Array.isArray(child.material)) {
-                            child.material.forEach(m => m.dispose());
-                        } else {
-                            child.material.dispose();
-                        }
+                        if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
+                        else child.material.dispose();
                     }
 
-                    // Force-delete any baked-in color attribute (may be all zeros)
+                    // Delete any baked-in color attribute (all zeros = black)
                     if (child.geometry.attributes.color) {
                         child.geometry.deleteAttribute('color');
                     }
 
                     const count = child.geometry.attributes.position.count;
-                    // Initialize to near-white (0.95) so mesh is clearly visible
                     const initColors = new Float32Array(count * 3);
-                    for (let i = 0; i < count * 3; i++) initColors[i] = 0.95;
+                    for (let i = 0; i < count * 3; i++) initColors[i] = 0.92;
                     const colorAttr = new THREE.BufferAttribute(initColors, 3);
                     colorAttr.needsUpdate = true;
                     child.geometry.setAttribute('color', colorAttr);
 
-                    child.material = new THREE.MeshStandardMaterial({
-                        vertexColors: true,
-                        roughness: 0.55,
-                        metalness: 0.05,
-                        side: THREE.DoubleSide   // render both faces — avoids black patches from inverted normals
-                    });
+                    // MeshBasicMaterial ignores normals/lighting entirely —
+                    // vertex color is rendered directly, immune to normal issues
+                    child.material = new THREE.MeshBasicMaterial({ vertexColors: true });
 
                     state.meshes.push(child);
-                    console.log('Mesh patched. Color attr count:', child.geometry.attributes.color.count);
                 }
             });
 
@@ -783,7 +770,7 @@ function updateBrainColors(isModeB) {
                 const voxelIdx = v2v[i];
                 const rVal = corrs[voxelIdx];
                 if (rVal === null || isNaN(rVal)) {
-                    targetColors.push(getGrey(0.75)); // mid-grey for NaN voxels
+                    targetColors.push(getGrey(0.75));
                 } else {
                     targetColors.push(getYlOrRd(rVal / maxR));
                 }
