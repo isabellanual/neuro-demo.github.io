@@ -348,14 +348,43 @@ renderer.setSize(brainContainer.clientWidth, brainContainer.clientHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 brainContainer.appendChild(renderer.domElement);
 
-const light1 = new THREE.AmbientLight(0xffffff, 0.8);
-scene.add(light1);
+// const light1 = new THREE.AmbientLight(0xffffff, 0.8);
+// scene.add(light1);
 
-const light2 = new THREE.DirectionalLight(0xffffff, 0.8);
-light2.position.set(5, -5, -7);
-light2.intensity = 1.4;
-light2.castShadow = false;
-scene.add(light2);
+// const light2 = new THREE.DirectionalLight(0xffffff, 0.8);
+// light2.position.set(5, -5, -7);
+// light2.intensity = 1.4;
+// light2.castShadow = false;
+// scene.add(light2);
+
+    // Lights — four directional lights from each side + ambient base
+// ensures no face goes dark regardless of rotation
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+const lightFront = new THREE.DirectionalLight(0xffffff, 0.6);
+lightFront.position.set(0, 0, 1);
+scene.add(lightFront);
+
+const lightBack = new THREE.DirectionalLight(0xffffff, 0.6);
+lightBack.position.set(0, 0, -1);
+scene.add(lightBack);
+
+const lightLeft = new THREE.DirectionalLight(0xffffff, 0.4);
+lightLeft.position.set(-1, 0, 0);
+scene.add(lightLeft);
+
+const lightRight = new THREE.DirectionalLight(0xffffff, 0.4);
+lightRight.position.set(1, 0, 0);
+scene.add(lightRight);
+
+const lightTop = new THREE.DirectionalLight(0xffffff, 0.4);
+lightTop.position.set(0, 1, 0);
+scene.add(lightTop);
+
+const lightBottom = new THREE.DirectionalLight(0xffffff, 0.3);
+lightBottom.position.set(0, -1, 0);
+scene.add(lightBottom);
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
